@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Admin - Thai Eastern Group</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* CSS ทั้งหมดเหมือนเดิม */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), url('https://img2.pic.in.th/pic/Home-6.png') center/cover no-repeat; display: flex; align-items: center; justify-content: center; position: relative; padding: 40px 20px; }
+        .background-logo { position: fixed; top: 15px; left: 15px; width: 180px; height: auto; z-index: 1000; opacity: 0.9; }
+        .main-container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 30px; width: 90%; max-width: 820px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); text-align: center; z-index: 2; margin-top: 50px; }
+        .header { margin-bottom: 30px; color: white; }
+        .header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); letter-spacing: 0.5px; }
+        .header p { font-size: 1.1rem; opacity: 0.9; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); }
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; width: 100%; margin: 0 auto; }
+        .module-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; color: white; position: relative; overflow: hidden; }
+        .module-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transition: left 0.6s ease; }
+        .module-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.2); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); }
+        .module-card:hover::before { left: 100%; }
+        .module-card i { font-size: 2.8rem; margin-bottom: 15px; color: #ffffff; text-shadow: 0 0 12px rgba(255, 255, 255, 0.5); display: block; }
+        .module-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+        .module-card p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); line-height: 1.4; }
+        
+        #secret-upload-button { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; z-index: 1000; font-size: 20px; backdrop-filter: blur(10px); transition: transform 0.3s; }
+        #secret-upload-button:hover { transform: scale(1.1) rotate(45deg); }
+        .admin-modal-overlay { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); justify-content: center; align-items: center;}
+        .admin-modal-overlay .modal-content { background: rgba(255, 255, 255, 0.15); padding: 30px; border: 1px solid rgba(255, 255, 255, 0.3); width: 90%; max-width: 450px; border-radius: 20px; text-align: center; color: #fff; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .admin-modal-overlay input, .admin-modal-overlay button { width: 100%; padding: 14px; margin-top: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.2); color: #fff; font-size: 1rem; }
+        .admin-modal-overlay input::placeholder { color: rgba(255,255,255,0.7); }
+        .admin-modal-overlay button { background: rgba(255, 255, 255, 0.3); cursor: pointer; font-weight: bold; transition: background-color 0.3s; }
+        .admin-modal-overlay button:hover { background: rgba(255, 255, 255, 0.4); }
+        .admin-modal-overlay hr { border: 0; height: 1px; background: rgba(255, 255, 255, 0.2); margin: 25px 0; }
+        .close-button { color: rgba(255, 255, 255, 0.8); float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        
+        @media (max-width: 768px) {
+            body { align-items: flex-start; padding-top: 100px; }
+            .background-logo { width: 150px; top: 15px; left: 15px; }
+            .main-container { padding: 25px; margin: 0 20px; width: calc(100% - 40px); margin-top: 0; }
+            .modules-grid { grid-template-columns: 1fr; gap: 15px; }
+            .header h1 { font-size: 1.8rem; }
+            .header p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <img src="https://img5.pic.in.th/file/secure-sv1/-1c3d81610977de24c.png" alt="Thai Eastern Group Logo" class="background-logo">
+    <div class="main-container">
+        <div class="header"><h1><i class="fas fa-cogs"></i> Smart Admin</h1><p>Thai Eastern Group</p></div>
+        <div class="modules-grid">
+            <div class="module-card" onclick="openModule('healthcare')"><i class="fas fa-user-md"></i><h3>ตรวจสอบสิทธิการรักษา</h3><p>จัดการและตรวจสอบข้อมูลสิทธิการรักษาพยาบาล</p></div>
+            <div class="module-card" onclick="openModule('emergency')"><i class="fas fa-phone-alt"></i><h3>เบอร์ฉุกเฉิน</h3><p>ข้อมูลติดต่อฉุกเฉินและการจัดการสิทธิ์เข้าถึง</p></div>
+            <div class="module-card" onclick="openModule('uniform')"><i class="fas fa-tshirt"></i><h3>เบิกชุดฟอร์ม</h3><p>ระบบเบิกชุดฟอร์มและอุปกรณ์สำนักงาน</p></div>
+            <div class="module-card" onclick="openModule('package')"><i class="fas fa-box"></i><h3>พัสดุ/ไปรษณีย์</h3><p>ติดตามสถานะและจัดการพัสดุไปรษณีย์</p></div>
+            <div class="module-card" onclick="openModule('dormitory')"><i class="fas fa-home"></i><h3>ทะเบียนผู้พักอาศัย</h3><p>จัดการข้อมูลที่พักอาศัยและที่จอดรถ</p></div>
+            <div class="module-card" onclick="openModule('sticker')"><i class="fas fa-car"></i><h3>สติ๊กเกอร์รถ</h3><p>ขอสติ๊กเกอร์ผ่านเข้า-ออกยานพาหนะ</p></div>
+        </div>
+    </div>
+    
+    <button id="secret-upload-button" title="Admin Data Upload"><i class="fas fa-cog"></i></button>
+    <div id="admin-upload-modal" class="admin-modal-overlay">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="admin-login-view">
+                <h3><i class="fas fa-lock"></i> Admin Access</h3>
+                <p>กรุณาใส่รหัสผ่าน</p>
+                <input type="text" id="admin-username" placeholder="Username" value="admin" readonly>
+                <input type="password" id="admin-password" placeholder="Password">
+                <button id="admin-login-button">เข้าสู่ระบบ</button>
+                <p id="admin-login-error" style="color: #ffcccc; display: none;">รหัสผ่านไม่ถูกต้อง</p>
+            </div>
+            <div id="admin-upload-view" style="display: none;">
+                <h3><i class="fas fa-database"></i> อัปโหลด Master Data</h3>
+                <p>เลือกไฟล์ Database.json เพื่ออัปเดต Server</p>
+                <input type="file" id="master-file-input" accept=".json">
+                <button id="upload-button">อัปโหลดไฟล์</button>
+                <p id="upload-status"></p>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        function openModule(module) {
+            switch(module) {
+                case 'healthcare': window.location.href = 'healthcare.html'; break;
+                case 'emergency': window.location.href = 'emergency_login.html'; break;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyBFep1y9I0OR5Hu_Gf0Mbywu-PEgFdQD2k",
+                authDomain: "smartadmin-hr-project.firebaseapp.com",
+                databaseURL: "https://smartadmin-hr-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "smartadmin-hr-project",
+                storageBucket: "smartadmin-hr-project.firebasestorage.app",
+                messagingSenderId: "797763301010",
+                appId: "1:797763301010:web:2c4b5e24ac0750e67cc04b"
+            };
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            const db = firebase.database();
+            
+            // --- Element References ---
+            const modal = document.getElementById('admin-upload-modal');
+            const secretButton = document.getElementById('secret-upload-button');
+            const closeButton = modal.querySelector('.close-button');
+            const loginView = document.getElementById('admin-login-view');
+            const uploadView = document.getElementById('admin-upload-view');
+            const loginButton = document.getElementById('admin-login-button');
+            const passwordInput = document.getElementById('admin-password');
+            const loginError = document.getElementById('admin-login-error');
+            const uploadBtn = document.getElementById('upload-button');
+            const uploadStatus = document.getElementById('upload-status');
+            
+            const safeGet = (value, defaultValue = 'N/A') => (value === undefined || value === null) ? defaultValue : value;
+            // --- Event Listeners ---
+            secretButton.onclick = () => modal.style.display = 'flex';
+            closeButton.onclick = () => modal.style.display = 'none';
+            window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; };
+            loginButton.onclick = () => {
+                if (passwordInput.value === '660134') {
+                    loginView.style.display = 'none';
+                    uploadView.style.display = 'block';
+                    loginError.style.display = 'none';
+                } else {
+                    loginError.style.display = 'block';
+                }
+            };
+            
+            // ✅ **โค้ดที่แก้ไขแล้ว**
+            uploadBtn.onclick = () => {
+                const fileInput = document.getElementById('master-file-input');
+                const file = fileInput.files[0];
+                if (!file) {
+                    uploadStatus.textContent = 'กรุณาเลือกไฟล์';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    uploadStatus.textContent = 'กำลังประมวลผลไฟล์...';
+                    try {
+                        const fileContent = event.target.result;
+                        const data = JSON.parse(fileContent);
+                        
+                        let finalData = data;
+                        // ตรวจสอบเผื่อไฟล์มี "DatabaseReport" ซ้อนอยู่
+                        if (data && data.DatabaseReport && Array.isArray(data.DatabaseReport)) {
+                            finalData = data.DatabaseReport;
+                        }
+
+                        if (!Array.isArray(finalData)) {
+                             throw new Error("รูปแบบไฟล์ไม่ถูกต้อง ต้องเป็น Array ของ Object");
+                        }
+
+                        if (!confirm(`พบข้อมูล ${finalData.length} รายการ จะอัปโหลดไปยัง /master_data_import?`)) {
+                            uploadStatus.textContent = 'ยกเลิกโดยผู้ใช้';
+                            return;
+                        }
+
+                        uploadStatus.textContent = 'กำลังอัปโหลด...';
+                        await db.ref('master_data_import').set(finalData);
+                        
+                        uploadStatus.textContent = `✅ อัปโหลด Master Data สำเร็จ!`;
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                            loginView.style.display = 'block';
+                            uploadView.style.display = 'none';
+                            passwordInput.value = '';
+                            fileInput.value = '';
+                            uploadStatus.textContent = '';
+                        }, 3000);
+                        
+                    } catch (err) {
+                        uploadStatus.textContent = 'เกิดข้อผิดพลาด: ' + err.message;
+                    }
+                };
+                reader.readAsText(file, 'UTF-8');
+            };
+        });
+    </script>
+</body>
+</html>

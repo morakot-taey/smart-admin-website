@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้อมูลเบอร์ฉุกเฉิน - Smart Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="emergency_styles.css">
+    <style>
+        /* Add Modal and new Button Styles */
+        .action-button, .management-button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.8rem;
+        }
+        .action-button:hover, .management-button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .action-button.edit { background-color: #4CAF50; }
+        .management-button.delete { background-color: #f44336; }
+        
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 9000; backdrop-filter: blur(5px); }
+        .modal { display: none; position: fixed; z-index: 10000; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; background: #f9f9f9; border-radius: 18px; box-shadow: 0 4px 32px #0007; color: #333; }
+        .modal.open, .modal-backdrop.active { display: block; }
+        .modal-header { padding: 20px 25px; font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid #ddd; }
+        .modal-content { padding: 25px; max-height: 70vh; overflow-y: auto; }
+        .modal-footer { padding: 15px 25px; text-align: right; border-top: 1px solid #ddd; }
+        .modal-close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; background: none; border: none; color: #888; cursor: pointer; }
+        .modal label { font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; display: block; }
+        .modal input { width: 100%; padding: 10px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; }
+        #edit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 20px; }
+        #delete-employees-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    </style>
+</head>
+<body>
+    <img src="https://img5.pic.in.th/file/secure-sv1/-1c3d81610977de24c.png" alt="Logo" class="background-logo">
+    <div class="main-container">
+        <div class="main-header">
+            <h1><i class="fas fa-phone-shield-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน (Admin)</h1>
+            <div class="navigation">
+                <a href="#" class="nav-button" onclick="logoutAndGoHome()">
+                    <i class="fas fa-home"></i> กลับหน้าแรก
+                </a>
+            </div>
+        </div>
+        <div class="section-box">
+            <div class="section-header">
+                <h2><i class="fas fa-tasks"></i> ส่วนจัดการข้อมูล</h2>
+                <button class="management-button delete" onclick="openDeleteModal()"><i class="fas fa-user-minus"></i> ลบพนักงานที่ลาออก</button>
+            </div>
+            <div class="filters">
+                <input type="text" id="search-input" placeholder="ค้นหาด้วยรหัส, ชื่อ, แผนก..." onkeyup="filterAndRender()">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>รหัสพนักงาน</th> <th>ชื่อ–สกุล</th> <th>แผนก</th> <th>สังกัด</th> <th>บริษัท</th>
+                            <th>ตำแหน่ง</th> <th>เบอร์โทรศัพท์ (พนักงาน)</th> <th>ชื่อผู้ติดต่อฉุกเฉิน</th>
+                            <th>เบอร์โทรผู้ติดต่อ</th> <th>ความสัมพันธ์</th> <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Employee Modal -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+    <div id="edit-modal" class="modal">
+        <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+        <div class="modal-header">แก้ไขข้อมูลติดต่อฉุกเฉิน</div>
+        <div class="modal-content">
+            <form id="edit-form">
+                 <div id="edit-form-grid">
+                    <div><label>รหัสพนักงาน</label><input type="text" id="edit-EmployeeCardNo" readonly></div>
+                    <div><label>ชื่อ-สกุล (แสดงผล)</label><input type="text" id="edit-FullName" readonly></div>
+                    <div><label>เบอร์โทรศัพท์ (พนักงาน)</label><input type="text" id="edit-Telephone"></div>
+                    <div><label>ชื่อผู้ติดต่อฉุกเฉิน</label><input type="text" id="edit-ชื่อผู้ติดต่อ"></div>
+                    <div><label>เบอร์โทรผู้ติดต่อ</label><input type="text" id="edit-เบอร์โทรศัพท์"></div>
+                    <div><label>ความสัมพันธ์</label><input type="text" id="edit-ความสัมพันธ์"></div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="management-button" onclick="closeAllModals()">ยกเลิก</button>
+            <button class="management-button action-button edit" onclick="saveEmployeeChanges()">บันทึกการเปลี่ยนแปลง</button>
+        </div>
+    </div>
+
+    <!-- Delete Employees Modal -->
+    <div id="delete-modal" class="modal">
+        <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+        <div class="modal-header">ลบพนักงานที่ลาออก</div>
+        <div class="modal-content">
+            <h3>กรอกรหัสพนักงานที่ต้องการลบ (สูงสุด 10 คน)</h3>
+            <div id="delete-employees-inputs"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="management-button" onclick="closeAllModals()">ยกเลิก</button>
+            <button class="management-button delete" onclick="deleteEmployees()">ยืนยันการลบ</button>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <script>
+        // ✅ **โค้ดฉบับสมบูรณ์**
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFep1y9I0OR5Hu_Gf0Mbywu-PEgFdQD2k",
+            authDomain: "smartadmin-hr-project.firebaseapp.com",
+            databaseURL: "https://smartadmin-hr-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "smartadmin-hr-project",
+            storageBucket: "smartadmin-hr-project.firebasestorage.app",
+            messagingSenderId: "797763301010",
+            appId: "1:797763301010:web:2c4b5e24ac0750e67cc04b"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        
+        const db = firebase.database();
+        const masterDataRef = db.ref('master_data_import');
+        let rawData = [];
+        let currentlyEditingIndex = null;
+
+        const safeGet = (value, defaultValue = '-') => (value === undefined || value === null || value === '') ? defaultValue : value;
+        function logoutAndGoHome() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            masterDataRef.on('value', (snapshot) => {
+                rawData = snapshot.val() || [];
+                if (!Array.isArray(rawData)) rawData = [];
+                filterAndRender();
+            });
+        });
+
+        function filterAndRender() {
+            const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+            let filteredData = rawData;
+            if (searchTerm) {
+                filteredData = rawData.filter(row => 
+                    safeGet(row['EmployeeCardNo']).toLowerCase().includes(searchTerm) ||
+                    `${safeGet(row['ชื่อ'])} ${safeGet(row['สกุล'])}`.toLowerCase().includes(searchTerm) ||
+                    safeGet(row['แผนก']).toLowerCase().includes(searchTerm)
+                );
+            }
+            renderTable(filteredData);
+        }
+
+        function renderTable(dataToRender) {
+            const tableBody = document.getElementById('data-table-body');
+            tableBody.innerHTML = '';
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="11" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
+                return;
+            }
+            dataToRender.forEach(row => {
+                const emp = {
+                    'Employee Code': safeGet(row['EmployeeCardNo']),
+                    'Name – Surname': `${safeGet(row['คำนำหน้า'])} ${safeGet(row['ชื่อ'])}  ${safeGet(row['สกุล'])}`.trim(),
+                    'Department': safeGet(row['แผนก']),
+                    'Affiliation': safeGet(row['สังกัด']),
+                    'Company': safeGet(row['CompanyCode']),
+                    'Position': safeGet(row['PositionAlt']),
+                    'Telephone': safeGet(row['Telephone']),
+                    'ชื่อผู้ติดต่อ': safeGet(row['ชื่อผู้ติดต่อ']),
+                    'เบอร์โทรศัพท์': safeGet(row['เบอร์โทรศัพท์']),
+                    'ความสัมพันธ์': safeGet(row['ความสัมพันธ์'])
+                };
+                const tr = `
+                    <tr>
+                        <td>${emp['Employee Code']}</td> <td>${emp['Name – Surname']}</td>
+                        <td>${emp['Department']}</td> <td>${emp['Affiliation']}</td>
+                        <td>${emp['Company']}</td> <td>${emp['Position']}</td>
+                        <td>${emp['Telephone']}</td> <td>${emp['ชื่อผู้ติดต่อ']}</td>
+                        <td>${emp['เบอร์โทรศัพท์']}</td> <td>${emp['ความสัมพันธ์']}</td>
+                        <td><button class="action-button edit" onclick="openEditModal('${emp['Employee Code']}')"><i class="fas fa-edit"></i></button></td>
+                    </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', tr);
+            });
+        }
+
+        // --- Modal Functions ---
+        function closeAllModals() {
+            document.getElementById('modal-backdrop').classList.remove('active');
+            document.getElementById('edit-modal').classList.remove('open');
+            document.getElementById('delete-modal').classList.remove('open');
+        }
+
+        // --- Edit Employee ---
+        function openEditModal(empId) {
+            currentlyEditingIndex = rawData.findIndex(row => row.EmployeeCardNo === empId);
+            if (currentlyEditingIndex === -1) {
+                alert("ไม่พบข้อมูลพนักงาน"); return;
+            }
+            const empData = rawData[currentlyEditingIndex];
+            document.getElementById('edit-EmployeeCardNo').value = safeGet(empData.EmployeeCardNo);
+            document.getElementById('edit-FullName').value = `${safeGet(empData['คำนำหน้า'])} ${safeGet(empData['ชื่อ'])}  ${safeGet(empData['สกุล'])}`;
+            document.getElementById('edit-Telephone').value = safeGet(empData.Telephone);
+            document.getElementById('edit-ชื่อผู้ติดต่อ').value = safeGet(empData.ชื่อผู้ติดต่อ);
+            document.getElementById('edit-เบอร์โทรศัพท์').value = safeGet(empData.เบอร์โทรศัพท์);
+            document.getElementById('edit-ความสัมพันธ์').value = safeGet(empData.ความสัมพันธ์);
+
+            document.getElementById('modal-backdrop').classList.add('active');
+            document.getElementById('edit-modal').classList.add('open');
+        }
+
+        async function saveEmployeeChanges() {
+            if (currentlyEditingIndex === null) return;
+            const updates = {
+                'Telephone': document.getElementById('edit-Telephone').value,
+                'ชื่อผู้ติดต่อ': document.getElementById('edit-ชื่อผู้ติดต่อ').value,
+                'เบอร์โทรศัพท์': document.getElementById('edit-เบอร์โทรศัพท์').value,
+                'ความสัมพันธ์': document.getElementById('edit-ความสัมพันธ์').value,
+            };
+
+            const path = `master_data_import/${currentlyEditingIndex}`;
+            try {
+                await db.ref(path).update(updates);
+                alert('อัปเดตข้อมูลสำเร็จ!');
+                closeAllModals();
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการอัปเดต: ' + err.message);
+            }
+        }
+
+        // --- Delete Employees ---
+        function openDeleteModal() {
+            const container = document.getElementById('delete-employees-inputs');
+            container.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                container.insertAdjacentHTML('beforeend', `<input type="text" placeholder="รหัสพนักงานคนที่ ${i}">`);
+            }
+            document.getElementById('modal-backdrop').classList.add('active');
+            document.getElementById('delete-modal').classList.add('open');
+        }
+
+        async function deleteEmployees() {
+            const inputs = document.querySelectorAll('#delete-employees-inputs input');
+            const idsToDelete = Array.from(inputs).map(input => input.value.trim()).filter(id => id);
+
+            if (idsToDelete.length === 0) {
+                alert("กรุณากรอกรหัสพนักงานที่ต้องการลบ"); return;
+            }
+            if (!confirm(`คุณต้องการลบพนักงานจำนวน ${idsToDelete.length} คนใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
+                return;
+            }
+
+            try {
+                const updatedData = rawData.filter(row => !idsToDelete.includes(row.EmployeeCardNo));
+                await masterDataRef.set(updatedData);
+                alert(`ลบข้อมูลพนักงาน ${idsToDelete.length} คนสำเร็จ`);
+                closeAllModals();
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการลบ: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้อมูลเบอร์ฉุกเฉิน</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="emergency_styles.css">
+    <style>
+        /* This ensures the page title color is consistent */
+        h1 {
+            color: #FFFFFF;
+            text-shadow: 1px 1px 8px rgba(0,0,0,0.7);
+        }
+    </style>
+</head>
+<body>
+    <img src="https://img5.pic.in.th/file/secure-sv1/-1c3d81610977de24c.png" alt="Logo" class="background-logo">
+    <div class="main-container">
+        <div class="main-header">
+            <h1 id="page-title"><i class="fas fa-phone-shield-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน</h1>
+            <div class="navigation">
+                <a href="#" class="nav-button" onclick="logoutAndGoHome()">
+                    <i class="fas fa-home"></i> กลับหน้าแรก
+                </a>
+            </div>
+        </div>
+        <div class="section-box">
+            <div class="section-header">
+                <h2><i class="fas fa-list-ul"></i> รายชื่อผู้ติดต่อ</h2>
+            </div>
+            <div class="filters">
+                <input type="text" id="search-input" placeholder="ค้นหาด้วยรหัส, ชื่อ, แผนก..." onkeyup="filterAndRender()">
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>รหัสพนักงาน</th>
+                            <th>ชื่อ–สกุล</th>
+                            <th>แผนก</th>
+                            <th>สังกัด</th>
+                            <th>บริษัท</th>
+                            <th>ตำแหน่ง</th>
+                            <th>เบอร์โทรศัพท์ (พนักงาน)</th>
+                            <th>ชื่อผู้ติดต่อฉุกเฉิน</th>
+                            <th>เบอร์โทรผู้ติดต่อ</th>
+                            <th>ความสัมพันธ์</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <script>
+        // ✅ **โค้ดฉบับสมบูรณ์**
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFep1y9I0OR5Hu_Gf0Mbywu-PEgFdQD2k",
+            authDomain: "smartadmin-hr-project.firebaseapp.com",
+            databaseURL: "https://smartadmin-hr-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "smartadmin-hr-project",
+            storageBucket: "smartadmin-hr-project.firebasestorage.app",
+            messagingSenderId: "797763301010",
+            appId: "1:797763301010:web:2c4b5e24ac0750e67cc04b"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        const masterDataRef = db.ref('master_data_import');
+        let userPermittedData = []; // เก็บข้อมูลเฉพาะที่ User มีสิทธิ์เห็น
+
+        // --- Utility Functions ---
+        const safeGet = (value, defaultValue = '-') => (value === undefined || value === null || value === '') ? defaultValue : value;
+        
+        function logoutAndGoHome() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        // --- Main Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const userString = sessionStorage.getItem('current_emergency_user');
+            const user = userString ? JSON.parse(userString) : { affiliation: null };
+            const userAffiliation = user.affiliation;
+
+             if (!userAffiliation) {
+                const tableBody = document.getElementById('data-table-body');
+                tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">เกิดข้อผิดพลาด: ไม่สามารถระบุสิทธิ์ผู้ใช้ได้</td></tr>';
+                return;
+            }
+            
+            document.getElementById('page-title').innerHTML = `<i class="fas fa-phone-shield-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน (${userAffiliation})`;
+
+            masterDataRef.on('value', (snapshot) => {
+                const importedData = snapshot.val();
+                let dataToProcess = [];
+
+                if (Array.isArray(importedData)) {
+                     if (userAffiliation === 'admin') {
+                        dataToProcess = importedData;
+                    } else {
+                        dataToProcess = importedData.filter(row => safeGet(row['สังกัด'], '').trim() === userAffiliation);
+                    }
+                }
+                
+                userPermittedData = dataToProcess.map(row => ({
+                    'Employee Code': safeGet(row['EmployeeCardNo']),
+                    'Name – Surname': `${safeGet(row['คำนำหน้า'])}  ${safeGet(row['ชื่อ'])}  ${safeGet(row['สกุล'])}`.trim(),
+                    'Department': safeGet(row['แผนก']),
+                    'Affiliation': safeGet(row['สังกัด']),
+                    'Company': safeGet(row['CompanyCode']),
+                    'Position': safeGet(row['PositionAlt']),
+                    'Telephone': safeGet(row['Telephone']),
+                    'ชื่อผู้ติดต่อ': safeGet(row['ชื่อผู้ติดต่อ']),
+                    'เบอร์โทรศัพท์': safeGet(row['เบอร์โทรศัพท์']),
+                    'ความสัมพันธ์': safeGet(row['ความสัมพันธ์'])
+                }));
+                
+                filterAndRender();
+            });
+        });
+
+        function filterAndRender() {
+            const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+            let filteredData = userPermittedData;
+
+            if (searchTerm) {
+                filteredData = userPermittedData.filter(contact => 
+                    contact['Employee Code'].toLowerCase().includes(searchTerm) ||
+                    contact['Name – Surname'].toLowerCase().includes(searchTerm) ||
+                    contact['Department'].toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderTable(filteredData);
+        }
+
+        function renderTable(dataToRender) {
+            const tableBody = document.getElementById('data-table-body');
+            tableBody.innerHTML = '';
+            if (dataToRender.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
+                 return;
+            }
+
+            dataToRender.forEach(contact => {
+                const row = `<tr>
+                    <td>${contact['Employee Code']}</td>
+                    <td>${contact['Name – Surname']}</td>
+                    <td>${contact['Department']}</td>
+                    <td>${contact['Affiliation']}</td>
+                    <td>${contact['Company']}</td>
+                    <td>${contact['Position']}</td>
+                    <td>${contact['Telephone']}</td>
+                    <td>${contact['ชื่อผู้ติดต่อ']}</td>
+                    <td>${contact['เบอร์โทรศัพท์']}</td>
+                    <td>${contact['ความสัมพันธ์']}</td>
+                </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+    </script>
+</body>
+</html>

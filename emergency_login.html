@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเบอร์ฉุกเฉิน - Thai Eastern Group</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)),
+                        url('https://img2.pic.in.th/pic/Home-6.png') center/cover no-repeat fixed;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            position: relative;
+            padding-top: 150px;
+        }
+        .background-logo {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            width: 180px;
+            height: auto;
+            z-index: 1000;
+            opacity: 0.9;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 40px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            text-align: center;
+            z-index: 2;
+        }
+        .header {
+            margin-bottom: 30px;
+            color: white;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 3px 12px rgba(0, 0, 0, 0.6);
+        }
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        .login-section {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .login-section h2 {
+            color: white;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .btn {
+            padding: 18px 25px;
+            background: linear-gradient(135deg, #1e90ff 0%, #1c86ee 50%, #1874cd 100%);
+            border: 2px solid rgba(30, 144, 255, 0.6);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(30, 144, 255, 0.4);
+        }
+        .alert {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.15) 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border: 2px solid rgba(239, 68, 68, 0.4);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
+            display: none; /* Changed from display: flex */
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(21, 128, 61, 0.15) 100%);
+            border-color: rgba(34, 197, 94, 0.4);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <img src="https://img5.pic.in.th/file/secure-sv1/-1c3d81610977de24c.png" 
+         alt="Thai Eastern Group Logo" class="background-logo">
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-phone-alt"></i> ระบบเบอร์โทรศัพท์ฉุกเฉิน</h1>
+            <p>Emergency Contact Management System</p>
+        </div>
+        <div id="loginSection">
+            <div class="login-section">
+                <h2><i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ</h2>
+                <div id="loginAlert" class="alert"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> Username / สังกัด
+                        </label>
+                        <input type="text" id="username" class="form-input" placeholder="กรอก Username หรือ สังกัด" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i> Password / รหัสพนักงาน
+                        </label>
+                        <input type="password" id="password" class="form-input" placeholder="กรอก Password หรือ รหัสพนักงาน" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ✅ **โค้ดฉบับสมบูรณ์สำหรับ emergency_login.html**
+        const users = {
+            'admin': {
+                passwords: ['420019', '680399', '566145', '680061', '640259', '597185', '650029', '680225', '600179', '670187', '597354', '600546', '660134', '597713'],
+                role: 'admin',
+                affiliation: 'admin' // Admin สามารถเห็นข้อมูลได้ทั้งหมด
+            },
+            'EQR': { passwords: ['566013', 'admin2025'], role: 'employee', affiliation: 'EQR' },
+            'TEI': { passwords: ['493065', 'admin2025'], role: 'employee', affiliation: 'TEI' },
+            'TER': { passwords: ['482715', 'admin2025'], role: 'employee', affiliation: 'TER' },
+            'EPO': { passwords: ['640023', 'admin2025'], role: 'employee', affiliation: 'EPO' },
+            'TETSO': { passwords: ['FM2025', 'admin2025'], role: 'employee', affiliation: 'TETSO' },
+            'TEBP': { passwords: ['630195', 'admin2025'], role: 'employee', affiliation: 'TEBP' },
+            'Center': { passwords: ['admin2025'], role: 'employee', affiliation: 'Center' },
+            'R&D': { passwords: ['admin2025'], role: 'employee', affiliation: 'R&D' }
+        };
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('loginAlert');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'times-circle'}"></i> ${message}`;
+            alertDiv.style.display = 'flex';
+            if (type === 'danger') {
+                setTimeout(() => { alertDiv.style.display = 'none'; }, 3000);
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
+            
+            const userData = users[usernameInput];
+            
+            if (userData && userData.passwords.includes(passwordInput)) {
+                // ✅ **แก้ไข: บันทึก affiliation ที่ถูกต้องลงใน sessionStorage**
+                const sessionData = {
+                    affiliation: userData.affiliation,
+                    role: userData.role
+                };
+                sessionStorage.setItem('current_emergency_user', JSON.stringify(sessionData));
+                
+                showAlert('เข้าสู่ระบบสำเร็จ!', 'success');
+                
+                setTimeout(() => {
+                    if (userData.role === 'admin') {
+                        window.location.href = 'emergency_main.html';
+                    } else {
+                        window.location.href = 'emergency_employee.html';
+                    }
+                }, 1000);
+
+            } else {
+                showAlert('Username หรือ Password ไม่ถูกต้อง', 'danger');
+            }
+        });
+
+        // Redirect if already logged in
+        window.addEventListener('load', function() {
+            const savedUser = sessionStorage.getItem('current_emergency_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                showAlert('คุณอยู่ในระบบแล้ว กำลังเปลี่ยนเส้นทาง...', 'success');
+                 setTimeout(() => {
+                    window.location.href = user.role === 'admin' ? 'emergency_main.html' : 'emergency_employee.html';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
