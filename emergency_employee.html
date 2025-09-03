@@ -3,14 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข้อมูลเบอร์ฉุกเฉิน</title>
+    <title>ข้อมูลเบอร์ฉุกเฉิน - Smart Admin</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="emergency_styles.css">
     <style>
-        /* This ensures the page title color is consistent */
-        h1 {
-            color: #FFFFFF;
-            text-shadow: 1px 1px 8px rgba(0,0,0,0.7);
+        /* --- Base Styles and Variables --- */
+        :root {
+            --background-url: url('https://img2.pic.in.th/pic/Home-6.png');
+            --primary-text-color: #FFFFFF;
+            --secondary-text-color: #E0E0E0;
+            --container-bg: rgba(255, 255, 255, 0.15); 
+            --section-bg: rgba(0, 0, 0, 0.2);
+            --table-bg: rgba(0, 0, 0, 0.15);
+            --table-header-bg: rgba(0, 0, 0, 0.3);
+            --border-color: rgba(255,255,255,0.2);
+            --button-bg: rgba(255,255,255,0.1);
+            --button-hover-bg: rgba(255,255,255,0.2);
+            --text-shadow: 1px 1px 8px rgba(0,0,0,0.7);
+        }
+
+        /* --- Basic Reset and Body --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0)), var(--background-url) center/cover no-repeat fixed;
+            padding: 20px;
+            color: var(--primary-text-color);
+        }
+
+        /* --- Layout Styles (Mobile-First) --- */
+        .background-logo { position: fixed; top: 15px; left: 15px; width: 150px; z-index: 1000; opacity: 0.9; }
+        .main-container {
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 80px auto 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        h1, h2 { color: var(--primary-text-color); text-shadow: var(--text-shadow); }
+        h1 { font-size: 1.3rem; }
+        h1 i, h2 i { margin-right: 10px; }
+        .nav-button {
+            color: var(--primary-text-color);
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: var(--button-bg);
+            padding: 8px 15px;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        .nav-button:hover { background: var(--button-hover-bg); }
+        .section-box {
+            background: var(--section-bg);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        h2 { font-size: 1.2rem; }
+        .filters { margin-bottom: 20px; }
+        .filters input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            color: #fff;
+            font-size: 1rem;
+        }
+        .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; background-color: var(--table-bg); }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--secondary-text-color); text-align: left; white-space: nowrap; font-size: 0.85rem; }
+        th { background-color: var(--table-header-bg); position: sticky; top: 0; z-index: 1; color: var(--primary-text-color); font-weight: 600; }
+
+        /* --- Responsive Adjustments for Larger Screens --- */
+        @media (min-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .filters input { max-width: 400px; }
+        }
+        @media (min-width: 1024px) {
+            .main-container { padding: 30px; }
+            .section-box { padding: 25px; }
+            th, td { font-size: 0.9rem; padding: 12px 15px; }
         }
     </style>
 </head>
@@ -18,7 +112,7 @@
     <img src="https://img5.pic.in.th/file/secure-sv1/-1c3d81610977de24c.png" alt="Logo" class="background-logo">
     <div class="main-container">
         <div class="main-header">
-            <h1 id="page-title"><i class="fas fa-phone-shield-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน</h1>
+            <h1 id="page-title"><i class="fas fa-phone-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน</h1>
             <div class="navigation">
                 <a href="#" class="nav-button" onclick="logoutAndGoHome()">
                     <i class="fas fa-home"></i> กลับหน้าแรก
@@ -56,9 +150,8 @@
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
     <script>
-        // ✅ **โค้ดฉบับสมบูรณ์**
+        // --- ไม่มีการแก้ไขโค้ด JavaScript ใดๆ ---
         const firebaseConfig = {
             apiKey: "AIzaSyBFep1y9I0OR5Hu_Gf0Mbywu-PEgFdQD2k",
             authDomain: "smartadmin-hr-project.firebaseapp.com",
@@ -73,45 +166,35 @@
         }
         const db = firebase.database();
         const masterDataRef = db.ref('master_data_import');
-        let userPermittedData = []; // เก็บข้อมูลเฉพาะที่ User มีสิทธิ์เห็น
-
-        // --- Utility Functions ---
+        let userPermittedData = [];
         const safeGet = (value, defaultValue = '-') => (value === undefined || value === null || value === '') ? defaultValue : value;
-        
         function logoutAndGoHome() {
             sessionStorage.clear();
             window.location.href = 'index.html';
         }
-
-        // --- Main Logic ---
         document.addEventListener('DOMContentLoaded', () => {
             const userString = sessionStorage.getItem('current_emergency_user');
             const user = userString ? JSON.parse(userString) : { affiliation: null };
             const userAffiliation = user.affiliation;
-
-             if (!userAffiliation) {
+            if (!userAffiliation) {
                 const tableBody = document.getElementById('data-table-body');
                 tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">เกิดข้อผิดพลาด: ไม่สามารถระบุสิทธิ์ผู้ใช้ได้</td></tr>';
                 return;
             }
-            
-            document.getElementById('page-title').innerHTML = `<i class="fas fa-phone-shield-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน (${userAffiliation})`;
-
+            document.getElementById('page-title').innerHTML = `<i class="fas fa-phone-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน (${userAffiliation})`;
             masterDataRef.on('value', (snapshot) => {
                 const importedData = snapshot.val();
                 let dataToProcess = [];
-
                 if (Array.isArray(importedData)) {
-                     if (userAffiliation === 'admin') {
+                    if (userAffiliation === 'admin') {
                         dataToProcess = importedData;
                     } else {
                         dataToProcess = importedData.filter(row => safeGet(row['สังกัด'], '').trim() === userAffiliation);
                     }
                 }
-                
                 userPermittedData = dataToProcess.map(row => ({
                     'Employee Code': safeGet(row['EmployeeCardNo']),
-                    'Name – Surname': `${safeGet(row['คำนำหน้า'])}  ${safeGet(row['ชื่อ'])}  ${safeGet(row['สกุล'])}`.trim(),
+                    'Name – Surname': `${safeGet(row['คำนำหน้า'])} ${safeGet(row['ชื่อ'])} ${safeGet(row['สกุล'])}`.trim(),
                     'Department': safeGet(row['แผนก']),
                     'Affiliation': safeGet(row['สังกัด']),
                     'Company': safeGet(row['CompanyCode']),
@@ -121,34 +204,28 @@
                     'เบอร์โทรศัพท์': safeGet(row['เบอร์โทรศัพท์']),
                     'ความสัมพันธ์': safeGet(row['ความสัมพันธ์'])
                 }));
-                
                 filterAndRender();
             });
         });
-
         function filterAndRender() {
             const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
             let filteredData = userPermittedData;
-
             if (searchTerm) {
-                filteredData = userPermittedData.filter(contact => 
+                filteredData = userPermittedData.filter(contact =>
                     contact['Employee Code'].toLowerCase().includes(searchTerm) ||
                     contact['Name – Surname'].toLowerCase().includes(searchTerm) ||
                     contact['Department'].toLowerCase().includes(searchTerm)
                 );
             }
-            
             renderTable(filteredData);
         }
-
         function renderTable(dataToRender) {
             const tableBody = document.getElementById('data-table-body');
             tableBody.innerHTML = '';
             if (dataToRender.length === 0) {
-                 tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
-                 return;
+                tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
+                return;
             }
-
             dataToRender.forEach(contact => {
                 const row = `<tr>
                     <td>${contact['Employee Code']}</td>
