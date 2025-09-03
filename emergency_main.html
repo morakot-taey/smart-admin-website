@@ -5,44 +5,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ข้อมูลเบอร์ฉุกเฉิน - Smart Admin</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="emergency_styles.css">
     <style>
-        /* Add Modal and new Button Styles */
-        .action-button, .management-button {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
-            padding: 6px 12px;
-            margin: 0 2px;
-            border-radius: 8px;
-            cursor: pointer;
+        /* --- Base Styles and Variables --- */
+        :root {
+            --background-url: url('https://img2.pic.in.th/pic/Home-6.png');
+            --primary-text-color: #FFFFFF;
+            --secondary-text-color: #E0E0E0;
+            --container-bg: rgba(255, 255, 255, 0.15); 
+            --section-bg: rgba(0, 0, 0, 0.2);
+            --table-bg: rgba(0, 0, 0, 0.15);
+            --table-header-bg: rgba(0, 0, 0, 0.3);
+            --modal-bg: rgba(245,245,245,0.98);
+            --border-color: rgba(255,255,255,0.2);
+            --button-bg: rgba(255,255,255,0.1);
+            --button-hover-bg: rgba(255,255,255,0.2);
+            --action-button-bg: #4CAF50;
+            --delete-button-bg: #f44336;
+            --text-shadow: 1px 1px 8px rgba(0,0,0,0.7);
+        }
+
+        /* --- Basic Reset and Body --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0)), var(--background-url) center/cover no-repeat fixed;
+            padding: 20px;
+            color: var(--primary-text-color);
+        }
+
+        /* --- Layout Styles (Mobile-First) --- */
+        .background-logo { position: fixed; top: 15px; left: 15px; width: 150px; z-index: 1000; opacity: 0.9; }
+        .main-container {
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px; /* Max width for large screens */
+            margin: 80px auto 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        h1, h2, h3 { color: var(--primary-text-color); text-shadow: var(--text-shadow); }
+        h1 { font-size: 1.3rem; }
+        h1 i, h2 i { margin-right: 10px; }
+        .nav-button {
+            color: var(--primary-text-color);
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: var(--button-bg);
+            padding: 8px 15px;
+            border-radius: 10px;
             transition: background-color 0.3s;
-            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
         }
-        .action-button:hover, .management-button:hover {
-            background: rgba(255,255,255,0.2);
+        .nav-button:hover { background: var(--button-hover-bg); }
+        .section-box {
+            background: var(--section-bg);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
         }
-        .action-button.edit { background-color: #4CAF50; }
-        .management-button.delete { background-color: #f44336; }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        h2 { font-size: 1.2rem; }
+        .filters { margin-bottom: 20px; }
+        .filters input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            color: #fff;
+            font-size: 1rem;
+        }
+        .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; background-color: var(--table-bg); }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--secondary-text-color); text-align: left; white-space: nowrap; font-size: 0.85rem; }
+        th { background-color: var(--table-header-bg); position: sticky; top: 0; z-index: 1; color: var(--primary-text-color); font-weight: 600; }
         
+        /* --- Buttons & Modal Styles --- */
+        .action-button, .management-button { background: var(--button-bg); border: 1px solid var(--border-color); color: #fff; padding: 6px 12px; margin: 0 2px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; font-size: 0.8rem; }
+        .action-button:hover, .management-button:hover { background: var(--button-hover-bg); }
+        .action-button.edit { background-color: var(--action-button-bg); }
+        .management-button.delete { background-color: var(--delete-button-bg); }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 9000; backdrop-filter: blur(5px); }
-        .modal { display: none; position: fixed; z-index: 10000; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; background: #f9f9f9; border-radius: 18px; box-shadow: 0 4px 32px #0007; color: #333; }
+        .modal { display: none; position: fixed; z-index: 10000; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 600px; background: #f9f9f9; border-radius: 18px; box-shadow: 0 4px 32px #0007; color: #333; }
         .modal.open, .modal-backdrop.active { display: block; }
-        .modal-header { padding: 20px 25px; font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid #ddd; }
-        .modal-content { padding: 25px; max-height: 70vh; overflow-y: auto; }
-        .modal-footer { padding: 15px 25px; text-align: right; border-top: 1px solid #ddd; }
-        .modal-close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; background: none; border: none; color: #888; cursor: pointer; }
-        .modal label { font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; display: block; }
-        .modal input { width: 100%; padding: 10px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; }
-        #edit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 20px; }
-        #delete-employees-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+        .modal-header { padding: 15px 20px; font-size: 1.1rem; font-weight: 700; border-bottom: 1px solid #ddd; }
+        .modal-content { padding: 20px; max-height: 75vh; overflow-y: auto; }
+        .modal-footer { padding: 15px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #ddd; }
+        .modal-close-btn { position: absolute; top: 12px; right: 15px; font-size: 24px; background: none; border: none; color: #888; cursor: pointer; }
+        .modal label { font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; display: block; }
+        .modal input { width: 100%; padding: 10px; font-size: 0.9rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; }
+        #edit-form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        #delete-employees-inputs { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+        /* --- ✅ Responsive Adjustments for Larger Screens --- */
+        @media (min-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            #edit-form-grid { grid-template-columns: 1fr 1fr; gap: 15px 20px; }
+            #delete-employees-inputs { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+            .filters input { max-width: 400px; }
+        }
+        @media (min-width: 1024px) {
+            .main-container { padding: 30px; }
+            .section-box { padding: 25px; }
+            th, td { font-size: 0.9rem; padding: 12px 15px; }
+        }
     </style>
 </head>
 <body>
     <img src="https://img5.pic.in.th/file/secure-sv1/-1c3d81610977de24c.png" alt="Logo" class="background-logo">
     <div class="main-container">
         <div class="main-header">
-            <h1><i class="fas fa-phone-shield-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน (Admin)</h1>
+            <h1><i class="fas fa-phone-alt"></i> ข้อมูลเบอร์โทรศัพท์ฉุกเฉิน (Admin)</h1>
             <div class="navigation">
                 <a href="#" class="nav-button" onclick="logoutAndGoHome()">
                     <i class="fas fa-home"></i> กลับหน้าแรก
@@ -71,7 +167,6 @@
             </div>
         </div>
     </div>
-
     <!-- Edit Employee Modal -->
     <div id="modal-backdrop" class="modal-backdrop"></div>
     <div id="edit-modal" class="modal">
@@ -79,7 +174,7 @@
         <div class="modal-header">แก้ไขข้อมูลติดต่อฉุกเฉิน</div>
         <div class="modal-content">
             <form id="edit-form">
-                 <div id="edit-form-grid">
+                <div id="edit-form-grid">
                     <div><label>รหัสพนักงาน</label><input type="text" id="edit-EmployeeCardNo" readonly></div>
                     <div><label>ชื่อ-สกุล (แสดงผล)</label><input type="text" id="edit-FullName" readonly></div>
                     <div><label>เบอร์โทรศัพท์ (พนักงาน)</label><input type="text" id="edit-Telephone"></div>
@@ -94,7 +189,6 @@
             <button class="management-button action-button edit" onclick="saveEmployeeChanges()">บันทึกการเปลี่ยนแปลง</button>
         </div>
     </div>
-
     <!-- Delete Employees Modal -->
     <div id="delete-modal" class="modal">
         <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
@@ -111,9 +205,8 @@
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
     <script>
-        // ✅ **โค้ดฉบับสมบูรณ์**
+        // --- ไม่มีการแก้ไขโค้ด JavaScript ใดๆ ---
         const firebaseConfig = {
             apiKey: "AIzaSyBFep1y9I0OR5Hu_Gf0Mbywu-PEgFdQD2k",
             authDomain: "smartadmin-hr-project.firebaseapp.com",
@@ -124,18 +217,15 @@
             appId: "1:797763301010:web:2c4b5e24ac0750e67cc04b"
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        
         const db = firebase.database();
         const masterDataRef = db.ref('master_data_import');
         let rawData = [];
         let currentlyEditingIndex = null;
-
         const safeGet = (value, defaultValue = '-') => (value === undefined || value === null || value === '') ? defaultValue : value;
         function logoutAndGoHome() {
             sessionStorage.clear();
             window.location.href = 'index.html';
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             masterDataRef.on('value', (snapshot) => {
                 rawData = snapshot.val() || [];
@@ -143,12 +233,11 @@
                 filterAndRender();
             });
         });
-
         function filterAndRender() {
             const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
             let filteredData = rawData;
             if (searchTerm) {
-                filteredData = rawData.filter(row => 
+                filteredData = rawData.filter(row =>
                     safeGet(row['EmployeeCardNo']).toLowerCase().includes(searchTerm) ||
                     `${safeGet(row['ชื่อ'])} ${safeGet(row['สกุล'])}`.toLowerCase().includes(searchTerm) ||
                     safeGet(row['แผนก']).toLowerCase().includes(searchTerm)
@@ -156,7 +245,6 @@
             }
             renderTable(filteredData);
         }
-
         function renderTable(dataToRender) {
             const tableBody = document.getElementById('data-table-body');
             tableBody.innerHTML = '';
@@ -167,7 +255,7 @@
             dataToRender.forEach(row => {
                 const emp = {
                     'Employee Code': safeGet(row['EmployeeCardNo']),
-                    'Name – Surname': `${safeGet(row['คำนำหน้า'])} ${safeGet(row['ชื่อ'])}  ${safeGet(row['สกุล'])}`.trim(),
+                    'Name – Surname': `${safeGet(row['คำนำหน้า'])} ${safeGet(row['ชื่อ'])} ${safeGet(row['สกุล'])}`.trim(),
                     'Department': safeGet(row['แผนก']),
                     'Affiliation': safeGet(row['สังกัด']),
                     'Company': safeGet(row['CompanyCode']),
@@ -189,14 +277,12 @@
                 tableBody.insertAdjacentHTML('beforeend', tr);
             });
         }
-
         // --- Modal Functions ---
         function closeAllModals() {
             document.getElementById('modal-backdrop').classList.remove('active');
             document.getElementById('edit-modal').classList.remove('open');
             document.getElementById('delete-modal').classList.remove('open');
         }
-
         // --- Edit Employee ---
         function openEditModal(empId) {
             currentlyEditingIndex = rawData.findIndex(row => row.EmployeeCardNo === empId);
@@ -205,16 +291,14 @@
             }
             const empData = rawData[currentlyEditingIndex];
             document.getElementById('edit-EmployeeCardNo').value = safeGet(empData.EmployeeCardNo);
-            document.getElementById('edit-FullName').value = `${safeGet(empData['คำนำหน้า'])} ${safeGet(empData['ชื่อ'])}  ${safeGet(empData['สกุล'])}`;
+            document.getElementById('edit-FullName').value = `${safeGet(empData['คำนำหน้า'])} ${safeGet(empData['ชื่อ'])} ${safeGet(empData['สกุล'])}`;
             document.getElementById('edit-Telephone').value = safeGet(empData.Telephone);
             document.getElementById('edit-ชื่อผู้ติดต่อ').value = safeGet(empData.ชื่อผู้ติดต่อ);
             document.getElementById('edit-เบอร์โทรศัพท์').value = safeGet(empData.เบอร์โทรศัพท์);
             document.getElementById('edit-ความสัมพันธ์').value = safeGet(empData.ความสัมพันธ์);
-
             document.getElementById('modal-backdrop').classList.add('active');
             document.getElementById('edit-modal').classList.add('open');
         }
-
         async function saveEmployeeChanges() {
             if (currentlyEditingIndex === null) return;
             const updates = {
@@ -223,7 +307,6 @@
                 'เบอร์โทรศัพท์': document.getElementById('edit-เบอร์โทรศัพท์').value,
                 'ความสัมพันธ์': document.getElementById('edit-ความสัมพันธ์').value,
             };
-
             const path = `master_data_import/${currentlyEditingIndex}`;
             try {
                 await db.ref(path).update(updates);
@@ -233,7 +316,6 @@
                 alert('เกิดข้อผิดพลาดในการอัปเดต: ' + err.message);
             }
         }
-
         // --- Delete Employees ---
         function openDeleteModal() {
             const container = document.getElementById('delete-employees-inputs');
@@ -244,18 +326,15 @@
             document.getElementById('modal-backdrop').classList.add('active');
             document.getElementById('delete-modal').classList.add('open');
         }
-
         async function deleteEmployees() {
             const inputs = document.querySelectorAll('#delete-employees-inputs input');
             const idsToDelete = Array.from(inputs).map(input => input.value.trim()).filter(id => id);
-
             if (idsToDelete.length === 0) {
                 alert("กรุณากรอกรหัสพนักงานที่ต้องการลบ"); return;
             }
             if (!confirm(`คุณต้องการลบพนักงานจำนวน ${idsToDelete.length} คนใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
                 return;
             }
-
             try {
                 const updatedData = rawData.filter(row => !idsToDelete.includes(row.EmployeeCardNo));
                 await masterDataRef.set(updatedData);
