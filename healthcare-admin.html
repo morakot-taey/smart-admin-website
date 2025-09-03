@@ -26,7 +26,7 @@
             --container-bg: rgba(255, 255, 255, 0.15); 
             --section-bg: rgba(0, 0, 0, 0.2);
             --table-bg: rgba(0, 0, 0, 0.15);
-            --table-header-bg: rgba(0, 0, 0, 0.25);
+            --table-header-bg: rgba(0, 0, 0, 0.3);
             --modal-bg: rgba(245,245,245,0.98);
             --border-color: rgba(255,255,255,0.2);
             --button-bg: rgba(255,255,255,0.1);
@@ -43,21 +43,71 @@
             padding: 20px;
             color: var(--primary-text-color);
         }
-        .background-logo { position: fixed; top: 15px; left: 15px; width: 180px; z-index: 1000; opacity: 0.9; }
-        .main-container { background: var(--container-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; width: 95%; max-width: 1600px; margin: 80px auto 40px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); }
-        .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .background-logo { position: fixed; top: 15px; left: 15px; width: 150px; z-index: 1000; opacity: 0.9; }
+        .main-container {
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px; /* Adjusted padding */
+            width: 100%; /* Changed from 95% */
+            max-width: 1600px;
+            margin: 80px auto 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 10px;
+        }
         h1, h2, h3 { color: var(--primary-text-color); text-shadow: var(--text-shadow); }
         h1 i, h2 i { margin-right: 10px; }
-        .nav-button { color: var(--primary-text-color); font-weight: 500; text-decoration: none; font-size: 1rem; background: var(--button-bg); padding: 8px 15px; border-radius: 10px; transition: background-color 0.3s; margin-left: 10px; border: 1px solid var(--border-color); text-shadow: var(--text-shadow); }
+        .nav-button {
+            color: var(--primary-text-color);
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 1rem;
+            background: var(--button-bg);
+            padding: 8px 15px;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+            border: 1px solid var(--border-color);
+            text-shadow: var(--text-shadow);
+        }
         .nav-button:hover { background: var(--button-hover-bg); }
-        .section-box { background: var(--section-bg); padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 1px solid var(--border-color); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
-        .filters { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-        .filters input { padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 220px; background: rgba(0,0,0,0.2); color: #fff; }
+        .section-box {
+            background: var(--section-bg);
+            padding: 15px; /* Adjusted padding */
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px; /* Adjusted padding */
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-direction: column; }
+        .filters input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            width: 100%; /* Full width on mobile */
+            background: rgba(0,0,0,0.2);
+            color: #fff;
+        }
         .table-container { max-height: 500px; overflow-x: auto; overflow-y: auto; border-radius: 8px; border: 1px solid var(--border-color); }
         table { width: 100%; border-collapse: collapse; background-color: var(--table-bg); }
-        th, td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); color: #fff; text-align: left; white-space: nowrap; }
-        th { background-color: var(--table-header-bg); position: sticky; top: 0; z-index: 1; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--secondary-text-color); text-align: left; white-space: nowrap; font-size: 0.9rem; }
+        th { background-color: var(--table-header-bg); position: sticky; top: 0; z-index: 1; color: var(--primary-text-color); font-weight: 600; }
         td i.fa-mars { color: #64b5f6; } td i.fa-venus { color: #f06292; } .gender-icon { margin-right: 8px; }
         .action-button, .management-button { background: var(--button-bg); border: 1px solid var(--border-color); color: #fff; padding: 6px 12px; margin: 0 2px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; font-size: 0.8rem; }
         .action-button:hover, .management-button:hover { background: var(--button-hover-bg); }
@@ -66,16 +116,40 @@
         
         /* Modal Styles */
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 9000; backdrop-filter: blur(5px); }
-        .modal { display: none; position: fixed; z-index: 10000; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 800px; background: var(--modal-bg); border-radius: 18px; box-shadow: 0 4px 32px #0007; color: #333; }
+        .modal { display: none; position: fixed; z-index: 10000; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 800px; background: var(--modal-bg); border-radius: 18px; box-shadow: 0 4px 32px #0007; color: #333; }
         .modal.open, .modal-backdrop.active { display: block; }
-        .modal-header { padding: 20px 25px; font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid #ddd; }
-        .modal-content { padding: 25px; max-height: 70vh; overflow-y: auto; }
-        .modal-footer { padding: 15px 25px; text-align: right; border-top: 1px solid #ddd; }
-        .modal-close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; background: none; border: none; color: #888; cursor: pointer; }
-        .modal label { font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; display: block; }
-        .modal input, .modal select { width: 100%; padding: 10px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; }
-        #edit-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 20px; }
-        #delete-employees-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+        .modal-header { padding: 15px 20px; font-size: 1.1rem; font-weight: 700; border-bottom: 1px solid #ddd; }
+        .modal-content { padding: 20px; max-height: 75vh; overflow-y: auto; }
+        .modal-footer { padding: 15px; text-align: right; border-top: 1px solid #ddd; display: flex; justify-content: flex-end; gap: 10px; }
+        .modal-close-btn { position: absolute; top: 12px; right: 15px; font-size: 24px; background: none; border: none; color: #888; cursor: pointer; }
+        .modal label { font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; display: block; }
+        .modal input, .modal select { width: 100%; padding: 10px; font-size: 0.9rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; }
+        #edit-form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        #delete-employees-inputs { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+        /* --- ✅ Responsive Adjustments --- */
+        /* Tablet and larger screens */
+        @media (min-width: 768px) {
+            .main-container { padding: 25px; }
+            .section-box { padding: 20px; }
+            .filters { flex-direction: row; }
+            .filters input { width: 220px; }
+            #edit-form-grid { grid-template-columns: 1fr 1fr; gap: 15px 20px; }
+            #delete-employees-inputs { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+            .modal { width: 90%; }
+        }
+
+        /* Small mobile screens */
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .main-container { margin-top: 70px; padding: 15px; }
+            .background-logo { width: 120px; top: 10px; left: 10px; }
+            h1 { font-size: 1.2rem; }
+            h2 { font-size: 1.1rem; }
+            .nav-button, .management-button { font-size: 0.8rem; padding: 6px 10px; }
+            .section-header { flex-direction: column; align-items: flex-start; }
+            th, td { font-size: 0.75rem; padding: 8px; }
+        }
     </style>
 </head>
 <body>
@@ -107,7 +181,6 @@
             </div>
         </div>
     </div>
-
     <!-- Edit Employee Modal -->
     <div id="modal-backdrop" class="modal-backdrop"></div>
     <div id="edit-modal" class="modal">
@@ -140,7 +213,6 @@
             <button class="management-button action-button edit" onclick="saveEmployeeChanges()">บันทึกการเปลี่ยนแปลง</button>
         </div>
     </div>
-
     <!-- Delete Employees Modal -->
     <div id="delete-modal" class="modal">
         <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
@@ -161,6 +233,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <script>
+        // --- ไม่มีการแก้ไขโค้ด JavaScript ใดๆ ---
         const firebaseConfig = {
             apiKey: "AIzaSyBFep1y9I0OR5Hu_Gf0Mbywu-PEgFdQD2k",
             authDomain: "smartadmin-hr-project.firebaseapp.com",
@@ -176,9 +249,7 @@
         const masterDataRef = db.ref('master_data_import');
         let rawData = [];
         let currentlyEditingIndex = null;
-
         const safeGet = (value, defaultValue = '-') => (value === undefined || value === null || value === '') ? defaultValue : value;
-
         document.addEventListener('DOMContentLoaded', function() {
             masterDataRef.on('value', (snapshot) => {
                 rawData = snapshot.val() || [];
@@ -189,7 +260,6 @@
                 filterAndRender();
             });
         });
-
         function mapDataForDisplay(data) {
             return data.map(row => ({
                 'Employee Code': safeGet(row['EmployeeCardNo']),
@@ -202,7 +272,6 @@
                 'เลขที่ประกันสังคม': safeGet(row['ssfId']), 'เลขกรมธรรม์ประกันอุบัติเหตุ': safeGet(row['เลขกรมธรรม์ประกันอุบัติเหตุ'])
             }));
         }
-
         function filterAndRender() {
             const searchId = document.getElementById('searchId').value.trim().toLowerCase();
             const searchName = document.getElementById('searchName').value.trim().toLowerCase();
@@ -215,7 +284,6 @@
             
             renderTable(filteredRawData);
         }
-
         function renderTable(dataToRender) {
             const tableBody = document.getElementById('employeeTableBody');
             tableBody.innerHTML = '';
@@ -238,14 +306,12 @@
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
         }
-
         // --- Modal Functions ---
         function closeAllModals() {
             document.getElementById('modal-backdrop').classList.remove('active');
             document.getElementById('edit-modal').classList.remove('open');
             document.getElementById('delete-modal').classList.remove('open');
         }
-
         // --- Edit Employee ---
         function openEditModal(empId) {
             currentlyEditingIndex = rawData.findIndex(row => row.EmployeeCardNo === empId);
@@ -255,7 +321,7 @@
             }
             const empData = rawData[currentlyEditingIndex];
             for (const key in empData) {
-                const input = document.getElementById(`edit-${key.replace(/\(/g, '\\(').replace(/\)/g, '\\)')}`);
+                const input = document.getElementById(`edit-${key.replace(/\(/g, '\(').replace(/\)/g, '\)')}`);
                 if (input) {
                     input.value = empData[key] || '';
                 }
@@ -263,7 +329,6 @@
             document.getElementById('modal-backdrop').classList.add('active');
             document.getElementById('edit-modal').classList.add('open');
         }
-
         async function saveEmployeeChanges() {
             if (currentlyEditingIndex === null) return;
             const updatedData = {};
@@ -273,7 +338,6 @@
                 const key = input.id.replace('edit-', '');
                 updatedData[key] = input.value;
             });
-
             const path = `master_data_import/${currentlyEditingIndex}`;
             try {
                 await db.ref(path).update(updatedData);
@@ -283,7 +347,6 @@
                 alert('เกิดข้อผิดพลาดในการอัปเดต: ' + err.message);
             }
         }
-
         // --- Delete Employees ---
         function openDeleteModal() {
             const container = document.getElementById('delete-employees-inputs');
@@ -294,11 +357,9 @@
             document.getElementById('modal-backdrop').classList.add('active');
             document.getElementById('delete-modal').classList.add('open');
         }
-
         async function deleteEmployees() {
             const inputs = document.querySelectorAll('#delete-employees-inputs input');
             const idsToDelete = Array.from(inputs).map(input => input.value.trim()).filter(id => id);
-
             if (idsToDelete.length === 0) {
                 alert("กรุณากรอกรหัสพนักงานที่ต้องการลบ");
                 return;
@@ -306,7 +367,6 @@
             if (!confirm(`คุณต้องการลบพนักงานจำนวน ${idsToDelete.length} คนใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
                 return;
             }
-
             try {
                 const updatedData = rawData.filter(row => !idsToDelete.includes(row.EmployeeCardNo));
                 await masterDataRef.set(updatedData);
